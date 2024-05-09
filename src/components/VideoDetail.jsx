@@ -9,15 +9,29 @@ import { fetchFromAPI } from "../utils/fetchFromAPI";
 
 const VideoDetail = () => {
     const [videoDetail, setVideoDetail] = useState(null);
+    const { id } = useParams();
     const [videos, setVideos] = useState(null);
-    const { id} = useParams();
 
     useEffect(() => {
-        fetchFromAPI(`video?part=snippet,statisticsid=${id}`)
-        .then((data) => setVideoDetail(data.items[0])); 
+        fetchFromAPI(`video?part=snippet,statistics&id=${id}`)
+        .then((data) => {
+            setVideoDetail(data.items[0]); 
+        console.log('Error while displaying data 1:', data);
+        })
+        .catch((error) => {
+            console.error('Error fetching videodetail 2:', error);
+        });
 
+ 
         fetchFromAPI(``)
-         .then((data) => setVideos(data.items)); 
+         .then((data) => {
+            setVideos(data.items);
+            console.log(data);
+        })
+        .catch((error) => {
+            console.error('Error fetching videos:', error);
+        });
+
     }, [id]);
 
     if (!videoDetail?.snippet) return 'Loading...';
@@ -32,12 +46,11 @@ const VideoDetail = () => {
                     <ReactPlayer url={`https://www.youtube.com/watch?v=${id}`}
                     className="react-player" controls />
                     <Typography color="#fff" variant="h5" fontWeight="bold" p={2}>
-                        {/* {videoDetail.snippet.title} */}
                         {title}
                     </Typography>
                     <Stack direction="row" justifyContent="space-between" sx={{ color: '#fff' }} py={1} px={2}>
                         <Link to={`/channel/${channelId}`}>
-                            <Typography variant={{ sm: 'subtitle1', md: 'h6' }}>
+                            <Typography variant={{ sm: 'subtitle1', md: 'h6', color:'#fff'}}>
                                 {channelTitle}
                                 <CheckCircle sx={{ fontSize: '12px', color: 'gray', ml: '5px'}} />
                             </Typography>
